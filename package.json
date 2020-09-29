@@ -1,0 +1,11 @@
+{
+  "name": "babel-plugin-es-mem-exp-optimize",
+  "version": "1.0.1",
+  "description": "一个es6引用优化babel插件",
+  "author": "guhongjie",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guhongjie/babel-plugin-es-mem-exp-optimize.git"
+  }
+}
