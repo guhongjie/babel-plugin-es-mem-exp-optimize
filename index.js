@@ -20,6 +20,7 @@ module.exports = function ({ types: t }, options) {
 
           const impNameMap = {}
           const impNodes = {}
+          const impIsImportAll = {}
           path.traverse({
             ImportDeclaration(subPath) {
               const impName = subPath.node.source.value
@@ -28,6 +29,10 @@ module.exports = function ({ types: t }, options) {
                   if (t.isImportDefaultSpecifier(e)) {
                     impNameMap[e.local.name] = impName
                     impNodes[impName] = subPath.node
+                  } else if (t.isImportNamespaceSpecifier(e)) {
+                    impNameMap[e.local.name] = impName
+                    impNodes[impName] = subPath.node
+                    impIsImportAll[impName] = true
                   }
                 });
               }
@@ -42,10 +47,11 @@ module.exports = function ({ types: t }, options) {
               const esExpressionMap = options[esName]
               const valOpt = esExpressionMap[subPath.node.property.name]
               if (!valOpt) return
-
+              
               const identKey = filePrefix + '_' + esName + '_' + subPath.node.property.name
               if (!identMap[identKey]) {
-                if (valOpt.import) {
+                const isImportAll = impIsImportAll[esName]
+                if (valOpt.import && !isImportAll) {
                   const impNode = impNodes[esName]
                   impNode.specifiers.push(
                     t.importSpecifier(
